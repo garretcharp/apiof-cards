@@ -1,0 +1,25 @@
+{
+  "name": "apiof-cards",
+  "version": "1.0.0",
+  "description": "An easy to use API for cards",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "vercel dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/garretcharp/apiof-cards.git"
+  },
+  "author": "Garret Harp <garretcharp@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/garretcharp/apiof-cards/issues"
+  },
+  "homepage": "https://github.com/garretcharp/apiof-cards#readme",
+  "dependencies": {
+    "@vercel/node": "^1.7.2"
+  },
+  "devDependencies": {
+    "vercel": "^19.1.2"
+  }
+}
