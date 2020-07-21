@@ -9,6 +9,15 @@
       "use": "@vercel/node"
     }
   ],
+  "routes": [
+    {
+      "src": "/",
+      "status": 301,
+      "headers": {
+        "Location": "https://app.swaggerhub.com/apis-docs/gch/apiof-cards/1.0.0#"
+      }
+    }
+  ],
   "cleanUrls": true,
   "trailingSlash": false
 }
