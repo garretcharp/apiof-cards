@@ -35,10 +35,10 @@ const schema = yup.object().shape({
     .min(1)
     .max(5)
     .test("Unique", "Pile names need to be unique", (values: [{ name: string, cards: number }]) =>
-      values ? values.every((i, index) => values.findIndex(v => v?.name === i?.name) === index) : true
+      values ? values.every((i, index) => values.findIndex(v => v && v.name === i.name) === index) : true
     )
     .test("DrawnPile", "You cannot create a drawn pile", (values: [{ name: string, cards: number }]) =>
-      values ? values.every((i) => values.findIndex(v => v?.name === `${i?.name}_drawn`) === -1) : true
+      values ? values.every((i) => values.findIndex(v => v && v.name === `${i.name}_drawn`) === -1) : true
     ),
   discard: yup.string()
 })
