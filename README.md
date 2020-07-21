@@ -2,7 +2,7 @@
 
 This is a simplistic API for easily managing games that deal with cards. Currently the API only handles poker cards, however, in the future I am looking to support other card sets such as Uno.
 
-Documentation: *Coming soon*
+Documentation: https://app.swaggerhub.com/apis-docs/gch/apiof-cards/1.0.0
 
 ## Getting Started
 
