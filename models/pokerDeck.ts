@@ -26,6 +26,15 @@ export const PokerDeckEntity = new Entity({
 
     piles: { type: 'map', required: true },
 
+    counts: {
+      type: 'map', default: (data) => {
+        const result = {}
+        Object.keys(data.piles).forEach(key => {
+          result[key] = data.piles[key].length
+        })
+      }
+    },
+
     discard: { type: 'string' },
 
     TTL: { type: 'number', hidden: true, default: () => Math.floor((Date.now() + config.dynamo.ttl) / 1000) }

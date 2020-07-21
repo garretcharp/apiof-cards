@@ -5,7 +5,9 @@ import { NowRequest, NowResponse } from '@vercel/node'
 import { createHandler, convertDeckKeys, to, isULID, shuffle, handleValidationError, config } from '../../../helpers'
 
 const schema = yup.object().shape({
-  piles: yup.array(yup.string().min(1).max(35)).default(['main'])
+  piles: yup.array(yup.string().min(1).max(35)).default(['main']),
+  all: yup.boolean().default(false),
+  includeDrawn: yup.boolean().default(false)
 })
 
 const get = async (req: NowRequest, res: NowResponse) => {
@@ -27,6 +29,8 @@ const get = async (req: NowRequest, res: NowResponse) => {
 
   const body = {
     piles: req.query.piles || req.body.piles,
+    all: req.query.all || req.body.all,
+    includeDrawn: req.query.includeDrawn || req.body.includeDrawn
   }
 
   const [validationError, result] = await to(schema.validate(body, { abortEarly: false, stripUnknown: true }))
@@ -37,7 +41,7 @@ const get = async (req: NowRequest, res: NowResponse) => {
 
   result.piles = result.piles.map(pile => pile.replace(/ /g, ''))
 
-  if (result.piles.length === 0) {
+  if (result.piles.length === 0 && result.all !== true) {
     return res.status(401).json({
       error: 'Bad Request',
       message: 'You must specify piles to shuffle',
@@ -64,6 +68,10 @@ const get = async (req: NowRequest, res: NowResponse) => {
     })
   }
 
+  if (result.all === true) {
+    result.piles = Object.keys(game.Item.piles)
+  }
+
   const validPiles = Object.keys(game.Item.piles)
 
   if (result.piles.every(p => validPiles.includes(p)) === false) {
@@ -77,8 +85,25 @@ const get = async (req: NowRequest, res: NowResponse) => {
 
   let modifications = {}
 
-  result.piles.forEach(pile => {
-    modifications[pile] = shuffle(game.Item.piles[pile])
+  result.piles.forEach((key: string) => {
+    const drawnKey = game.Item.discard ? game.Item.discard : `${key}_drawn`
+    const drawn = modifications[drawnKey] || game.Item.piles[drawnKey]
+    const pile = game.Item.piles[key]
+
+    if (result.includeDrawn === true) {
+      let max: number = game.Item.counts[pile]
+      const count = drawn.length + pile
+
+      if (count > max) {
+        modifications[key] = shuffle([...pile, ...drawn.slice(0, max - pile.length)])
+        modifications[drawnKey] = drawn.slice(max - pile.length)
+      } else {
+        modifications[key] = shuffle([...pile, ...drawn])
+        modifications[drawnKey] = []
+      }
+    } else {
+      modifications[key] = shuffle(pile)
+    }
   })
 
   const [updateError] = await to(PokerDeckEntity.update({
