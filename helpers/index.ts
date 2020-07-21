@@ -76,7 +76,7 @@ for (let index = 0; index < PokerValues.length; index++) {
     const code = `${valueCode}${suitCode}`
 
     PokerCards[code] = {
-      image: `https://apiof-cards.vercel.app/static/poker/fronts/${code}.png`,
+      image: `https://apiof.cards/static/poker/fronts/${code}.png`,
       value,
       suit,
       code
