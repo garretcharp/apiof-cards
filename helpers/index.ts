@@ -55,19 +55,19 @@ export const shuffle = (input: any[]) => {
 }
 
 const PokerValues = [
-  { value: 'ACE', code: 'A' },
-  { value: 'TWO', code: '2' },
-  { value: 'THREE', code: '3' },
-  { value: 'FOUR', code: '4' },
-  { value: 'FIVE', code: '5' },
-  { value: 'SIX', code: '6' },
-  { value: 'SEVEN', code: '7' },
-  { value: 'EIGHT', code: '8' },
-  { value: 'NINE', code: '9' },
-  { value: 'TEN', code: '10' },
-  { value: 'JACK', code: 'J' },
-  { value: 'QUEEN', code: 'Q' },
-  { value: 'KING', code: 'K' }
+  { value: 'ACE', code: 'A', blackjack: [1, 11] },
+  { value: 'TWO', code: '2', blackjack: [2, 2] },
+  { value: 'THREE', code: '3', blackjack: [3, 3] },
+  { value: 'FOUR', code: '4', blackjack: [4, 4] },
+  { value: 'FIVE', code: '5', blackjack: [5, 5] },
+  { value: 'SIX', code: '6', blackjack: [6, 6] },
+  { value: 'SEVEN', code: '7', blackjack: [7, 7] },
+  { value: 'EIGHT', code: '8', blackjack: [8, 8] },
+  { value: 'NINE', code: '9', blackjack: [9, 9] },
+  { value: 'TEN', code: '10', blackjack: [10, 10] },
+  { value: 'JACK', code: 'J', blackjack: [10, 10] },
+  { value: 'QUEEN', code: 'Q', blackjack: [10, 10] },
+  { value: 'KING', code: 'K', blackjack: [10, 10] }
 ]
 
 const PokerSuits = [
