@@ -8,10 +8,22 @@ export const handleValidationError = (res: NowResponse, error: any) => {
   })
 }
 
+export const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', '*')
+  res.setHeader('Access-Control-Allow-Headers', '*')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
+  return await fn(req, res)
+}
+
 export const createHandler = (methods: { [key: string]: Function }) => {
   const supported = Object.keys(methods).map(method => method.toUpperCase())
 
-  return (req: NowRequest, res: NowResponse) => {
+  return allowCors((req: NowRequest, res: NowResponse) => {
     const method = methods[req.method.toLowerCase()]
 
     if (method) {
@@ -23,7 +35,7 @@ export const createHandler = (methods: { [key: string]: Function }) => {
         supported
       })
     }
-  }
+  })
 }
 
 export const shuffle = (input: any[]) => {

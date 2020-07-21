@@ -1,32 +1,46 @@
 import * as yup from 'yup'
 
 import { ulid } from 'ulid'
-import { PokerDeckEntity } from '../../../models'
+import { PokerDeckEntity } from '../../models'
 import { NowRequest, NowResponse } from '@vercel/node'
-import { createHandler, handleValidationError, createDeck, convertDeckKeys, to } from '../../../helpers'
+import { createHandler, handleValidationError, createDeck, PokerCards, shuffle, convertDeckKeys, to } from '../../helpers'
 
 
-const get = (_req: NowRequest, res: NowResponse) => {
-  res.json({ cards: PokerDeckEntity.putParams() })
+const get = (req: NowRequest, res: NowResponse) => {
+  let { query } = req
+
+  let cards = Object.keys(PokerCards)
+
+  if (query.random === 'true') {
+    cards = shuffle(cards)
+  }
+
+  if (query.count && Number.isNaN(Number(query.count)) === false && Number(query.count) > 0) {
+    cards = cards.slice(0, Number(query.count))
+  }
+
+  res.json({ cards: convertDeckKeys(cards) })
 }
 
 const pileSchema = yup.object().shape({
-  name: yup.string().required().max(25),
-  cards: yup.number().max(520),
+  name: yup.string().max(25).required().transform(value => value.replace(/ /g, '')),
+  cards: yup.number().max(520).default(52),
   decks: yup.number().max(10)
-}).test("CardCount", "You may only specify one of cards or deck", values => {
-  return Boolean(values.cards && values.decks) === false
-})
+}).test("CardCount", "You may only specify one of cards or deck", values =>
+  Boolean(values.cards && values.decks) === false
+)
 
 const schema = yup.object().shape({
-  piles: yup.array().of(pileSchema)
+  piles: yup.array(pileSchema)
+    .min(1)
     .max(5)
     .test("Unique", "Pile names need to be unique", (values: [{ name: string, cards: number }]) =>
-      values ? values.every(({ name }, index) => values.findIndex(v => v.name === name) === index) : true
+      values ? values.every((i, index) => values.findIndex(v => v?.name === i?.name) === index) : true
     )
     .test("DrawnPile", "You cannot create a drawn pile", (values: [{ name: string, cards: number }]) =>
-      values ? values.every(({ name }) => values.findIndex(v => v.name === `${name}_drawn`) === -1) : true
-    )
+      values ? values.every((i) => values.findIndex(v => v?.name === `${i?.name}_drawn`) === -1) : true
+    ),
+  discard: yup.string()
 })
 
 const post = async (req: NowRequest, res: NowResponse) => {
@@ -45,15 +59,27 @@ const post = async (req: NowRequest, res: NowResponse) => {
   result.piles.forEach(({ name, cards, decks }) => {
     const deck = createDeck({ cards, decks })
     piles[name] = deck
-    piles[`${name}_drawn`] = []
+
+    if (!result.discard)
+      piles[`${name}_drawn`] = []
   })
+
+  if (result.discard) {
+    piles[result.discard] = []
+  }
 
   const gameId = ulid()
 
-  const [databaseError] = await to(PokerDeckEntity.put({
+  const item: { id: string, piles: { [key: string]: any }, discard?: string } = {
     id: gameId,
     piles
-  }, {
+  }
+
+  if (result.discard) {
+    item.discard = result.discard
+  }
+
+  const [databaseError] = await to(PokerDeckEntity.put(item, {
     conditions: {
       attr: 'PK',
       exists: false

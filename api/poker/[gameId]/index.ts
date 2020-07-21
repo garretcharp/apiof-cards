@@ -1,6 +1,6 @@
-import { PokerDeckEntity } from '../../../../models'
+import { PokerDeckEntity } from '../../../models'
 import { NowRequest, NowResponse } from '@vercel/node'
-import { createHandler, convertDeckKeys, to, isULID } from '../../../../helpers'
+import { createHandler, convertDeckKeys, to, isULID } from '../../../helpers'
 
 const get = async (req: NowRequest, res: NowResponse) => {
   let { query: { gameId } } = req

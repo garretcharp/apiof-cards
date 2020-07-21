@@ -1,11 +1,11 @@
 import * as yup from 'yup'
 
-import { PokerDeckEntity } from '../../../../models'
+import { PokerDeckEntity } from '../../../models'
 import { NowRequest, NowResponse } from '@vercel/node'
-import { createHandler, convertDeckKeys, to, isULID, handleValidationError, config, shuffle } from '../../../../helpers'
+import { createHandler, convertDeckKeys, to, isULID, handleValidationError, config, shuffle } from '../../../helpers'
 
 const schema = yup.object().shape({
-  pile: yup.string().min(1).max(35).default('main'),
+  pile: yup.string().min(1).max(35).default('main').transform(value => value.replace(/ /g, '')),
   count: yup.number().required().min(1).max(100).default(1),
   force: yup.boolean().default(false)
 })
@@ -56,8 +56,10 @@ const get = async (req: NowRequest, res: NowResponse) => {
     })
   }
 
+  const discardTo = game.Item.discard ? game.Item.discard : `${result.pile}_drawn`
+
   let pile: string[] = game.Item.piles[result.pile]
-  let drawnPile: string[] = game.Item.piles[`${result.pile}_drawn`]
+  let drawnPile: string[] = game.Item.piles[discardTo]
 
   if (!pile) {
     return res.status(400).json({
@@ -82,13 +84,14 @@ const get = async (req: NowRequest, res: NowResponse) => {
     piles: {
       $set: {
         [result.pile]: remaining,
-        [`${result.pile}_drawn`]: allDrawn
+        [discardTo]: allDrawn
       }
     },
     TTL: Math.floor((Date.now() + config.dynamo.ttl) / 1000)
   }))
 
   if (updateError) {
+    console.error(updateError)
     return res.status(500).json({
       error: 'Internal Server Error',
       message: 'An internal server error occurred try again later'

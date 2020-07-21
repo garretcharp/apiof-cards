@@ -1,8 +1,8 @@
 import * as yup from 'yup'
 
-import { PokerDeckEntity } from '../../../../models'
+import { PokerDeckEntity } from '../../../models'
 import { NowRequest, NowResponse } from '@vercel/node'
-import { createHandler, convertDeckKeys, to, isULID, shuffle, handleValidationError, config } from '../../../../helpers'
+import { createHandler, convertDeckKeys, to, isULID, shuffle, handleValidationError, config } from '../../../helpers'
 
 const schema = yup.object().shape({
   piles: yup.array(yup.string().min(1).max(35)).default(['main'])
@@ -32,6 +32,8 @@ const get = async (req: NowRequest, res: NowResponse) => {
   if (validationError) {
     return handleValidationError(res, validationError)
   }
+
+  result.piles = result.piles.map(pile => pile.replace(/ /g, ''))
 
   if (result.piles.length === 0) {
     return res.status(401).json({
