@@ -63,13 +63,15 @@ const get = async (req: NowRequest, res: NowResponse) => {
   let pile: string[] = game.Item.piles[result.pile]
   let drawnPile: string[] = game.Item.piles[discardTo]
 
-  if (!pile) {
+  if (!pile && Object.keys(game.Item.piles).length !== 1) {
     return res.status(400).json({
       error: 'Bad Request',
       message: 'A pile with the given name does not exist',
       pile: result.pile,
       valid: Object.keys(game.Item.piles)
     })
+  } else {
+    pile = game.Item.piles[Object.keys(game.Item.piles)[0]]
   }
 
   if (result.force === true && pile.length < result.count) {

@@ -32,6 +32,8 @@ export const PokerDeckEntity = new Entity({
         Object.keys(data.piles).forEach(key => {
           result[key] = data.piles[key].length
         })
+
+        return result
       }
     },
 
