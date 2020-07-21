@@ -7,15 +7,10 @@
     {
       "src": "api/**",
       "use": "@vercel/node"
-    }
-  ],
-  "routes": [
+    },
     {
-      "src": "/",
-      "status": 301,
-      "headers": {
-        "Location": "https://app.swaggerhub.com/apis-docs/gch/apiof-cards/1.0.0#"
-      }
+      "src": "index.js",
+      "use": "@vercel/node"
     }
   ],
   "cleanUrls": true,
