@@ -26,9 +26,9 @@ const get = async (req: NowRequest, res: NowResponse) => {
   }
 
   const body = {
-    pile: req.query.pile ?? req.body?.pile,
-    count: req.query.count ?? req.body?.count,
-    force: req.query.force ?? req.body?.force
+    pile: req.query.pile || req.body?.pile,
+    count: req.query.count || req.body?.count,
+    force: req.query.force || req.body?.force
   }
 
   const [validationError, result] = await to(schema.validate(body, { abortEarly: false, stripUnknown: true }))

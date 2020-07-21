@@ -99,7 +99,7 @@ export const createDeck = ({ decks, cards }: ICreateDeckOptions = {}, deckType =
   } else if (decks) {
     cards = Math.floor(decks * 52)
   } else {
-    cards = Math.floor(cards ?? 52)
+    cards = Math.floor(cards || 52)
   }
 
   const deckCount = Math.ceil(cards / 52)
