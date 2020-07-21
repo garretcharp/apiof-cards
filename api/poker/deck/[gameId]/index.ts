@@ -37,7 +37,9 @@ const get = async (req: NowRequest, res: NowResponse) => {
   }
 
   Object.keys(game.Item.piles).forEach(key => {
-    game.Item.piles[key] = convertDeckKeys(game.Item.piles[key])
+    game.Item.piles[key] = {
+      remaining: game.Item.piles[key].length
+    }
   })
 
   res.json({ ...game.Item })

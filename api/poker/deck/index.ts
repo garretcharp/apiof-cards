@@ -68,7 +68,10 @@ const post = async (req: NowRequest, res: NowResponse) => {
   }
 
   Object.keys(piles).forEach(key => {
-    piles[key] = convertDeckKeys(piles[key])
+    piles[key] = {
+      created: true,
+      remaining: piles[key].length
+    }
   })
 
   res.json({
