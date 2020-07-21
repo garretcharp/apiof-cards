@@ -1,12 +1,11 @@
 {
-  "builds": [
+  "routes": [
     {
-      "src": "static/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
+      "src": "/",
+      "status": 301,
+      "headers": {
+        "Location": "https://app.swaggerhub.com/apis-docs/gch/apiof-cards/1.0.0"
+      }
     }
   ],
   "cleanUrls": true,
