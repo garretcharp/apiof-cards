@@ -8,5 +8,7 @@
       "src": "api/**",
       "use": "@vercel/node"
     }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }

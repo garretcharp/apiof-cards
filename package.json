@@ -17,9 +17,14 @@
   },
   "homepage": "https://github.com/garretcharp/apiof-cards#readme",
   "dependencies": {
-    "@vercel/node": "^1.7.2"
+    "@vercel/node": "^1.7.2",
+    "aws-sdk": "^2.716.0",
+    "dynamodb-toolbox": "^0.2.0-beta.1",
+    "ulid": "^2.3.0",
+    "yup": "^0.29.1"
   },
   "devDependencies": {
+    "@types/yup": "^0.29.3",
     "vercel": "^19.1.2"
   }
 }
